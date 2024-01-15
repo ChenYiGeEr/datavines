@@ -52,22 +52,23 @@ public class ShellCommandProcess extends BaseCommandProcess {
         if(Files.exists(Paths.get(commandFile))){
             Files.delete(Paths.get(commandFile));
         }
-
+        // commandFile = 生成.command文件地址
         logger.info("create command file:{}",commandFile);
 
         StringBuilder sb = new StringBuilder();
         sb.append("#!/bin/sh\n");
         sb.append("BASEDIR=$(cd `dirname $0`; pwd)\n");
         sb.append("cd $BASEDIR\n");
-
+        // export SPARK_HOME2=/Users/lim/modules/spark-3.1.3-bin-hadoop3.2
         if (jobExecutionRequest.getEnv() != null) {
             sb.append(jobExecutionRequest.getEnv()).append("\n");
         }
-
+        // ${SPARK_HOME2}/bin/spark-submit xxxxxxxxxx
         sb.append("\n");
         sb.append(execCommand);
         logger.info("command : {}",sb.toString());
 
+        // 将sb写出到.command文件
         // write data to file
         FileUtils.writeStringToFile(new File(commandFile), sb.toString(), StandardCharsets.UTF_8);
     }

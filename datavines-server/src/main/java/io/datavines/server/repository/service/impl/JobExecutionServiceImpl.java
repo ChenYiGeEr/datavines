@@ -199,9 +199,12 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
 
     @Override
     public List<JobExecution> listJobExecutionNotInServerList(List<String> hostList) {
-        return baseMapper.selectList(new QueryWrapper<JobExecution>()
-                .notIn("execute_host", hostList)
-                .in("status",ExecutionStatus.RUNNING_EXECUTION.getCode(), ExecutionStatus.SUBMITTED_SUCCESS.getCode()));
+        QueryWrapper<JobExecution> queryWrapper = new QueryWrapper<JobExecution>()
+                .in("status",ExecutionStatus.RUNNING_EXECUTION.getCode(), ExecutionStatus.SUBMITTED_SUCCESS.getCode());
+        if (!hostList.isEmpty()) {
+            queryWrapper.notIn("execute_host", hostList);
+        }
+        return baseMapper.selectList(queryWrapper);
     }
 
     private void checkJobExecutionParameter(JobExecutionParameter jobExecutionParameter, String engineType) throws DataVinesServerException {
